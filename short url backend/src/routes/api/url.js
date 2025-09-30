@@ -4,7 +4,7 @@ const runUrl = require('../../controllers/runUrl')
 const urlRoute = express.Router()
 
 urlRoute.post('/sendLongUrl' , getUrl)
-urlRoute.get('/:shortid' , runUrl)
+urlRoute.get('/:shortId' , runUrl)
 
 
 
