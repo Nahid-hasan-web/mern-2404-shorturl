@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { FaRegCopy } from "react-icons/fa";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
@@ -22,18 +23,27 @@ const Url = () => {
     // ------------------------ short url part 
     const [longUrl , setLongUrl] = useState('')
     const [error , setError]     = useState('')
+    const [urlResponse , setUrlRespose] = useState('')
 
-
-    const handelShort = ()=>{
+    const handelShort = (e)=>{
+      e.preventDefault()
         if(!longUrl) return  setError('Long url required')
 
         setError('')
-        setLongUrl('')
+
+        console.log('okk')
+        axios.post('http://localhost:8000/url/sendLongUrl' , {longUrl})
+        .then((res)=>{setUrlRespose(res.data)})
+        .catch((err)=>{console.log(err)})
+
+
+        // setLongUrl('')
         
     
     }
 
 
+    console.log(urlResponse)
 
   return (
     <>
@@ -43,7 +53,7 @@ const Url = () => {
             Short url
           </h2>
           <p className="text-[12px] font-normal font-noto text-red-500">{error}</p>
-          <form className="w-full border py-2 px-3 rounded-[5px] bg-gray-100 mt-5 border-gray-400 flex justify-between">
+          <form onSubmit={handelShort} className="w-full border py-2 px-3 rounded-[5px] bg-gray-100 mt-5 border-gray-400 flex justify-between">
             <input
               value={longUrl}
               onChange={(e)=>setLongUrl(e.target.value)}
@@ -51,21 +61,27 @@ const Url = () => {
               className="border-none outline-none text-[14px] lg:text-xl"
               placeholder="Enter your long url"
             />
-            <button onClick={handelShort} className="bg-gray-300 py-2 px-5 rounded-[3px] text-[14px] font-medium lg:text-[16px] active:scale-[1.1]">
+            <button className="bg-gray-300 py-2 px-5 rounded-[3px] text-[14px] font-medium lg:text-[16px] active:scale-[1.1]">
               Short
             </button>
           </form>
-          <h2 className=" text-[12px] lg:text-[14px] font-normal font-noto text-gray-300 my-3  ">
-            Long url :{" "}
+          {
+            urlResponse&&
+
+          <h2 className=" text-[12px] lg:text-[14px] font-normal font-noto text-gray-300 my-3 overflow-hidden ">
+            Long url :{urlResponse.longUrl}
           </h2>
-          <div className="flex  justify-between">
+          }
+            {
+              urlResponse&&
+              <div className="flex  justify-between">
             <a
               target="_blank"
               className=" text-[14px] lg:text-[16px] font-noto font-normal text-gray-500 "
-              href="#"
+              href={urlResponse.shortUrl}
             >
               Short url
-              <span className="myUrl">hello this is url</span>
+              <span className="myUrl">{urlResponse.shortUrl}</span>
             </a>
             {copy ? (
               <button  className="text-lg text-green-400">
@@ -77,10 +93,14 @@ const Url = () => {
               </button>
             )}
           </div>
+            }
         </div>
       </div>
     </>
   );
 };
+
+
+
 
 export default Url;
